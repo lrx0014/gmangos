@@ -1,0 +1,2 @@
+# gmangos
+golang MaNGOS
