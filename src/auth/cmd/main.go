@@ -18,8 +18,9 @@ func main() {
 	}
 
 	constants.Welcome()
-	log.Info("[gMaNGOS][auth_server] is running.")
-	log.Infof("[gMaNGOS][auth_server] Endpoint: %s:%s", conf.Addr, conf.Port)
+	log.Infof("[gMaNGOS][auth_server] VERSION %s", constants.Version())
+	log.Infof("[gMaNGOS][auth_server] is running.")
+	log.Infof("[gMaNGOS][auth_server] endpoint: %s:%s", conf.Addr, conf.Port)
 
 	server.Register(processor.NewAuthProcessor())
 	server.Run()

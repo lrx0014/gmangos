@@ -3,6 +3,8 @@ package constants
 import "fmt"
 
 const (
+	version = "alpha-0.1"
+
 	welcomeText = `
  ######   ##     ##    ###    ##    ##  ######    #######   ######  
 ##    ##  ###   ###   ## ##   ###   ## ##    ##  ##     ## ##    ## 
@@ -16,4 +18,8 @@ const (
 
 func Welcome() {
 	fmt.Print(welcomeText)
+}
+
+func Version() string {
+	return version
 }

@@ -15,15 +15,15 @@ func NewAuthProcessor() *AuthProcessor {
 }
 
 func (a AuthProcessor) OnConnect() error {
-	log.Debugf("[auth][onConnect]")
+	log.Info("[auth][onConnect]")
 	return nil
 }
 
 func (a AuthProcessor) OnReceive(bytes []byte) error {
-	log.Debugf("[auth][onReceive]")
+	log.Info("[auth][onReceive]")
 	return nil
 }
 
 func (a AuthProcessor) OnClose() {
-	log.Debugf("[auth][onClose]")
+	log.Info("[auth][onClose]")
 }
