@@ -2,48 +2,100 @@ package tcp
 
 import (
 	"bufio"
-	"fmt"
+	log "github.com/sirupsen/logrus"
 	"net"
 )
 
 type Server struct {
+	conf      *Conf
+	pool      *ConnPool
+	processor Processor
 }
 
-func NewServer(c conf) (s Server) {
-	return Server{}
+type Processor interface {
+	OnConnect() error
+	OnReceive([]byte) error
+	OnClose()
 }
 
-func (s Server) OnConnect() {
+func NewServer(c *Conf) (s *Server, err error) {
+	err = c.parseConfig()
+	if err != nil {
+		return
+	}
+
+	s = &Server{
+		conf:      c,
+		pool:      NewConnPool(),
+		processor: &DefaultProcessor{},
+	}
+
+	return
+}
+
+func (s *Server) Register(p Processor) {
+	s.processor = p
+}
+
+func (s *Server) Run() {
+	listen, err := net.Listen("tcp", s.conf.address())
+	if err != nil {
+		log.Errorf("[listen] err: %s", err.Error())
+		return
+	}
+
+	for {
+		conn, e := listen.Accept()
+		if e != nil {
+			log.Errorf("[accept] err: %s", e.Error())
+			continue
+		}
+		e = s.processor.OnConnect()
+		if e != nil {
+			log.Errorf("[onConnect] err: %s", e.Error())
+			continue
+		}
+
+		go s.process(conn)
+	}
+}
+
+func (s *Server) Shutdown() {
 
 }
 
-func (s Server) OnReceive(conn net.Conn) {
-
-}
-
-func (s Server) OnClose() {
-
-}
-
-func process(conn net.Conn) {
+func (s *Server) process(conn net.Conn) {
 	defer conn.Close()
 
 	for {
 		reader := bufio.NewReader(conn)
-		var buf [128]byte
-		n, err := reader.Read(buf[:])
+		var buf []byte
+		n, err := reader.Read(buf)
 		if err != nil {
-			fmt.Printf("read from conn failed, err:%v\n", err)
+			log.Errorf("read from conn failed, err: %s", err.Error())
 			break
 		}
 
-		data := string(buf[:n])
-		fmt.Printf("got：%v\n", data)
-
-		_, err = conn.Write([]byte("ok"))
-		if err != nil {
-			fmt.Printf("write from conn failed, err:%v\n", err)
+		data := buf[:n]
+		e := s.processor.OnReceive(data)
+		if e != nil {
+			log.Errorf("[onReceive] err: %s", e.Error())
 			break
 		}
 	}
+}
+
+type DefaultProcessor struct {
+}
+
+func (d *DefaultProcessor) OnConnect() error {
+	return nil
+}
+
+func (d *DefaultProcessor) OnReceive(data []byte) error {
+	return nil
+}
+
+func (d *DefaultProcessor) OnClose() {
+
 }
