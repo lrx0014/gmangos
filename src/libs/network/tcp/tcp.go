@@ -14,9 +14,9 @@ type Server struct {
 }
 
 type Processor interface {
-	OnConnect() error
-	OnReceive([]byte) error
-	OnClose()
+	OnConnect(fd int) (err error)
+	OnReceive(fd int, req []byte) (resp []byte, err error)
+	OnClose(fd int)
 }
 
 func NewServer(c *Conf) (s *Server, err error) {
@@ -51,13 +51,18 @@ func (s *Server) Run() {
 			log.Errorf("[accept] err: %s", e.Error())
 			continue
 		}
-		e = s.processor.OnConnect()
+		fd, e := s.pool.Put(conn)
+		if e != nil {
+			log.Errorf("[pool][put] err: %s", e.Error())
+			continue
+		}
+		e = s.processor.OnConnect(fd)
 		if e != nil {
 			log.Errorf("[onConnect] err: %s", e.Error())
 			continue
 		}
 
-		go s.process(conn)
+		go s.process(fd, conn)
 	}
 }
 
@@ -65,7 +70,7 @@ func (s *Server) Shutdown() {
 
 }
 
-func (s *Server) process(conn net.Conn) {
+func (s *Server) process(fd int, conn net.Conn) {
 	defer conn.Close()
 
 	reader := bufio.NewReader(conn)
@@ -74,19 +79,24 @@ func (s *Server) process(conn net.Conn) {
 		var buf [128]byte
 		n, err := reader.Read(buf[:])
 		if err == io.EOF {
-			s.processor.OnClose()
+			s.processor.OnClose(fd)
 			break
 		}
 		if err != nil {
-			log.Errorf("read from conn failed, err: %s", err.Error())
+			log.Errorf("[onReceive] read tcp err: %s", err.Error())
 			break
 		}
 
 		data := buf[:n]
 		if len(data) > 0 {
-			e := s.processor.OnReceive(data)
+			resp, e := s.processor.OnReceive(fd, data)
 			if e != nil {
-				log.Errorf("[onReceive] err: %s", e.Error())
+				log.Errorf("[onReceive] process data err: %s", e.Error())
+				break
+			}
+			_, e = conn.Write(resp)
+			if e != nil {
+				log.Errorf("[onReceive] write tcp err: %s", e.Error())
 				break
 			}
 		}
@@ -96,14 +106,14 @@ func (s *Server) process(conn net.Conn) {
 type DefaultProcessor struct {
 }
 
-func (d *DefaultProcessor) OnConnect() error {
+func (d *DefaultProcessor) OnConnect(fd int) error {
 	return nil
 }
 
-func (d *DefaultProcessor) OnReceive(data []byte) error {
-	return nil
+func (d *DefaultProcessor) OnReceive(fd int, data []byte) (resp []byte, err error) {
+	return nil, nil
 }
 
-func (d *DefaultProcessor) OnClose() {
+func (d *DefaultProcessor) OnClose(fd int) {
 
 }

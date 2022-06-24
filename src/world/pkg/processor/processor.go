@@ -14,16 +14,16 @@ func NewWorldProcessor() *WorldProcessor {
 	return &WorldProcessor{}
 }
 
-func (a WorldProcessor) OnConnect() error {
-	log.Debugf("[world][onConnect]")
+func (a WorldProcessor) OnConnect(fd int) error {
+	log.Infof("[world][onConnect][client-%d]", fd)
 	return nil
 }
 
-func (a WorldProcessor) OnReceive(bytes []byte) error {
-	log.Debugf("[world][onReceive]")
-	return nil
+func (a WorldProcessor) OnReceive(fd int, bytes []byte) (resp []byte, err error) {
+	log.Infof("[world][onReceive][client-%d] %+v", fd, bytes)
+	return []byte("hi"), nil
 }
 
-func (a WorldProcessor) OnClose() {
-	log.Debugf("[world][onClose]")
+func (a WorldProcessor) OnClose(fd int) {
+	log.Infof("[world][onClose][client-%d]", fd)
 }

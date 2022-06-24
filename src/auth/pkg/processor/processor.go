@@ -14,16 +14,16 @@ func NewAuthProcessor() *AuthProcessor {
 	return &AuthProcessor{}
 }
 
-func (a AuthProcessor) OnConnect() error {
-	log.Info("[auth][onConnect]")
+func (a AuthProcessor) OnConnect(fd int) error {
+	log.Infof("[auth][onConnect][client-%d]", fd)
 	return nil
 }
 
-func (a AuthProcessor) OnReceive(bytes []byte) error {
-	log.Infof("[auth][onReceive] %+v", bytes)
-	return nil
+func (a AuthProcessor) OnReceive(fd int, bytes []byte) (resp []byte, err error) {
+	log.Infof("[auth][onReceive][client-%d] %+v", fd, bytes)
+	return []byte("hi"), nil
 }
 
-func (a AuthProcessor) OnClose() {
-	log.Info("[auth][onClose]")
+func (a AuthProcessor) OnClose(fd int) {
+	log.Infof("[auth][onClose][client-%d]", fd)
 }
