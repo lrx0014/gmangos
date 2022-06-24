@@ -20,7 +20,7 @@ func (a AuthProcessor) OnConnect() error {
 }
 
 func (a AuthProcessor) OnReceive(bytes []byte) error {
-	log.Info("[auth][onReceive]")
+	log.Infof("[auth][onReceive] %+v", bytes)
 	return nil
 }
 

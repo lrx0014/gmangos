@@ -3,6 +3,7 @@ package tcp
 import (
 	"bufio"
 	log "github.com/sirupsen/logrus"
+	"io"
 	"net"
 )
 
@@ -67,20 +68,27 @@ func (s *Server) Shutdown() {
 func (s *Server) process(conn net.Conn) {
 	defer conn.Close()
 
+	reader := bufio.NewReader(conn)
+
 	for {
-		reader := bufio.NewReader(conn)
-		var buf []byte
-		n, err := reader.Read(buf)
+		var buf [128]byte
+		n, err := reader.Read(buf[:])
+		if err == io.EOF {
+			s.processor.OnClose()
+			break
+		}
 		if err != nil {
 			log.Errorf("read from conn failed, err: %s", err.Error())
 			break
 		}
 
 		data := buf[:n]
-		e := s.processor.OnReceive(data)
-		if e != nil {
-			log.Errorf("[onReceive] err: %s", e.Error())
-			break
+		if len(data) > 0 {
+			e := s.processor.OnReceive(data)
+			if e != nil {
+				log.Errorf("[onReceive] err: %s", e.Error())
+				break
+			}
 		}
 	}
 }
