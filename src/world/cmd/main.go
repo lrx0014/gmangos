@@ -22,13 +22,15 @@ func main() {
 		panic(err)
 	}
 
+	server.Register(processor.NewWorldProcessor(conf))
+	go server.Run()
+
 	constants.Welcome()
 	log.Infof("[gMaNGOS][world_server] VERSION %s", constants.Version())
 	log.Infof("[gMaNGOS][world_server] is running.")
 	log.Infof("[gMaNGOS][world_server] endpoint: %s:%s", conf.Server.Host, conf.Server.Port)
 
-	server.Register(processor.NewWorldProcessor(conf))
-	server.Run()
+	select {}
 }
 
 func parseFlags() {

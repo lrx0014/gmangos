@@ -1,15 +1,15 @@
 package dao
 
 import (
-	"database/sql"
 	"github.com/gomodule/redigo/redis"
 	"gmangos/src/libs/config"
 	mysqlBuilder "gmangos/src/libs/mysql"
 	redisBuilder "gmangos/src/libs/redis"
+	"gorm.io/gorm"
 )
 
 type Dao struct {
-	db    *sql.DB
+	db    *gorm.DB
 	redis *redis.Pool
 }
 

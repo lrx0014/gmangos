@@ -3,7 +3,7 @@ Addr = "127.0.0.1"
 Port = "9998"
 
 [MySQL]
-DSN = "admin:admin@tcp(127.0.0.1:3306)/gmangos"
+DSN = "root:abcd1234@tcp(127.0.0.1:3306)/test"
 Idle = 10
 Active = 10
 IdleTimeout = 400

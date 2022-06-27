@@ -5,6 +5,7 @@ import (
 	"gmangos/src/dao"
 	"gmangos/src/libs/config"
 	"gmangos/src/libs/network/tcp"
+	"time"
 )
 
 type AuthProcessor struct {
@@ -21,6 +22,11 @@ func NewAuthProcessor(c *config.Conf) *AuthProcessor {
 
 func (a AuthProcessor) OnConnect(fd int) error {
 	log.Infof("[auth][onConnect][client-%d]", fd)
+	err := a.dao.SaveConnState(fd, time.Now())
+	if err != nil {
+		return err
+	}
+	
 	return nil
 }
 
