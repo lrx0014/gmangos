@@ -1,4 +1,4 @@
-package tcp
+package config
 
 import "fmt"
 
@@ -7,12 +7,7 @@ const (
 	DefaultPort = "8888"
 )
 
-type Conf struct {
-	Addr string
-	Port string
-}
-
-func (c *Conf) parseConfig() (err error) {
+func (c *ServerConf) ParseConfig() (err error) {
 	if c.Addr == "" {
 		c.Addr = DefaultAddr
 	}
@@ -23,6 +18,6 @@ func (c *Conf) parseConfig() (err error) {
 	return
 }
 
-func (c *Conf) address() string {
+func (c *ServerConf) Address() string {
 	return fmt.Sprintf("%s:%s", c.Addr, c.Port)
 }

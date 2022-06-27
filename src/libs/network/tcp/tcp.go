@@ -3,12 +3,13 @@ package tcp
 import (
 	"bufio"
 	log "github.com/sirupsen/logrus"
+	"gmangos/src/libs/config"
 	"io"
 	"net"
 )
 
 type Server struct {
-	conf      *Conf
+	conf      *config.ServerConf
 	pool      *ConnPool
 	processor Processor
 }
@@ -19,8 +20,8 @@ type Processor interface {
 	OnClose(fd int)
 }
 
-func NewServer(c *Conf) (s *Server, err error) {
-	err = c.parseConfig()
+func NewServer(c *config.ServerConf) (s *Server, err error) {
+	err = c.ParseConfig()
 	if err != nil {
 		return
 	}
@@ -39,7 +40,7 @@ func (s *Server) Register(p Processor) {
 }
 
 func (s *Server) Run() {
-	listen, err := net.Listen("tcp", s.conf.address())
+	listen, err := net.Listen("tcp", s.conf.Address())
 	if err != nil {
 		log.Errorf("[listen] err: %s", err.Error())
 		return

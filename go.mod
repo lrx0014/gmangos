@@ -8,4 +8,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 )
 
-require golang.org/x/sys v0.0.0-20220610221304-9f5ed59c137d // indirect
+require (
+	github.com/pelletier/go-toml/v2 v2.0.2 // indirect
+	golang.org/x/sys v0.0.0-20220610221304-9f5ed59c137d // indirect
+)

@@ -1,18 +1,23 @@
 package main
 
 import (
+	"flag"
 	log "github.com/sirupsen/logrus"
 	"gmangos/src/auth/pkg/processor"
+	"gmangos/src/libs/config"
 	"gmangos/src/libs/constants"
 	"gmangos/src/libs/network/tcp"
 )
 
+var (
+	configPath string
+)
+
 func main() {
-	conf := &tcp.Conf{
-		Addr: "127.0.0.1",
-		Port: "9999",
-	}
-	server, err := tcp.NewServer(conf)
+	parseFlags()
+	conf := config.LoadConfig(config.ReadFile(configPath))
+
+	server, err := tcp.NewServer(conf.Server)
 	if err != nil {
 		panic(err)
 	}
@@ -20,8 +25,15 @@ func main() {
 	constants.Welcome()
 	log.Infof("[gMaNGOS][auth_server] VERSION %s", constants.Version())
 	log.Infof("[gMaNGOS][auth_server] is running.")
-	log.Infof("[gMaNGOS][auth_server] endpoint: %s:%s", conf.Addr, conf.Port)
+	log.Infof("[gMaNGOS][auth_server] endpoint: %s:%s", conf.Server.Addr, conf.Server.Port)
 
 	server.Register(processor.NewAuthProcessor())
 	server.Run()
+}
+
+func parseFlags() {
+	path := flag.String("conf", "config.toml", "指定toml配置文件路径")
+	flag.Parse()
+
+	configPath = *path
 }
