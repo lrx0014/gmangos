@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+var C *Conf
+
+var parsed bool
+
 type Conf struct {
 	Server ServerConf
 	Redis  RedisConf
@@ -43,14 +47,18 @@ func ReadFile(path string) (data []byte) {
 }
 
 func LoadConfig(data []byte) *Conf {
-	c := &Conf{}
-	err := toml.Unmarshal(data, c)
+	C = &Conf{}
+	err := toml.Unmarshal(data, C)
 	if err != nil {
 		panic(err)
 	}
 
-	c.parse()
-	return c
+	C.parse()
+	return C
+}
+
+func GetConf() *Conf {
+	return C
 }
 
 func (c *Conf) parse() {
@@ -68,4 +76,6 @@ func (c *Conf) parse() {
 	if err != nil {
 		panic(err)
 	}
+
+	parsed = true
 }
