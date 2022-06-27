@@ -5,8 +5,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gmangos/src/auth/pkg/processor"
 	"gmangos/src/libs/config"
-	"gmangos/src/libs/constants"
 	"gmangos/src/libs/network/tcp"
+	"gmangos/src/libs/welcome"
 )
 
 var (
@@ -25,8 +25,8 @@ func main() {
 	server.Register(processor.NewAuthProcessor(conf))
 	go server.Run()
 
-	constants.Welcome()
-	log.Infof("[gMaNGOS][auth_server] VERSION %s", constants.Version())
+	welcome.Welcome()
+	log.Infof("[gMaNGOS][auth_server] VERSION %s", welcome.Version())
 	log.Infof("[gMaNGOS][auth_server] is running.")
 	log.Infof("[gMaNGOS][auth_server] endpoint: %s:%s", conf.Server.Host, conf.Server.Port)
 

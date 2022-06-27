@@ -4,8 +4,8 @@ import (
 	"flag"
 	log "github.com/sirupsen/logrus"
 	"gmangos/src/libs/config"
-	"gmangos/src/libs/constants"
 	"gmangos/src/libs/network/tcp"
+	"gmangos/src/libs/welcome"
 	"gmangos/src/world/pkg/processor"
 )
 
@@ -25,8 +25,8 @@ func main() {
 	server.Register(processor.NewWorldProcessor(conf))
 	go server.Run()
 
-	constants.Welcome()
-	log.Infof("[gMaNGOS][world_server] VERSION %s", constants.Version())
+	welcome.Welcome()
+	log.Infof("[gMaNGOS][world_server] VERSION %s", welcome.Version())
 	log.Infof("[gMaNGOS][world_server] is running.")
 	log.Infof("[gMaNGOS][world_server] endpoint: %s:%s", conf.Server.Host, conf.Server.Port)
 
