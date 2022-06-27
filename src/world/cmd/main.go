@@ -25,9 +25,9 @@ func main() {
 	constants.Welcome()
 	log.Infof("[gMaNGOS][world_server] VERSION %s", constants.Version())
 	log.Infof("[gMaNGOS][world_server] is running.")
-	log.Infof("[gMaNGOS][world_server] endpoint: %s:%s", conf.Server.Addr, conf.Server.Port)
+	log.Infof("[gMaNGOS][world_server] endpoint: %s:%s", conf.Server.Host, conf.Server.Port)
 
-	server.Register(processor.NewWorldProcessor())
+	server.Register(processor.NewWorldProcessor(conf))
 	server.Run()
 }
 

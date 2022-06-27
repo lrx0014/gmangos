@@ -2,16 +2,21 @@ package processor
 
 import (
 	log "github.com/sirupsen/logrus"
+	"gmangos/src/dao"
+	"gmangos/src/libs/config"
 	"gmangos/src/libs/network/tcp"
 )
 
 type WorldProcessor struct {
+	dao *dao.Dao
 }
 
 var _ tcp.Processor = new(WorldProcessor)
 
-func NewWorldProcessor() *WorldProcessor {
-	return &WorldProcessor{}
+func NewWorldProcessor(c *config.Conf) *WorldProcessor {
+	return &WorldProcessor{
+		dao: dao.New(c),
+	}
 }
 
 func (a WorldProcessor) OnConnect(fd int) error {

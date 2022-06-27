@@ -3,21 +3,21 @@ package config
 import "fmt"
 
 const (
-	DefaultAddr = "127.0.0.1"
-	DefaultPort = "8888"
+	DefaultServerHost = "127.0.0.1"
+	DefaultServerPort = "8888"
 )
 
 func (c *ServerConf) ParseConfig() (err error) {
-	if c.Addr == "" {
-		c.Addr = DefaultAddr
+	if c.Host == "" {
+		c.Host = DefaultServerHost
 	}
 	if c.Port == "" {
-		c.Port = DefaultPort
+		c.Port = DefaultServerPort
 	}
 
 	return
 }
 
 func (c *ServerConf) Address() string {
-	return fmt.Sprintf("%s:%s", c.Addr, c.Port)
+	return fmt.Sprintf("%s:%s", c.Host, c.Port)
 }

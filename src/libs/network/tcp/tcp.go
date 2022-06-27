@@ -9,7 +9,7 @@ import (
 )
 
 type Server struct {
-	conf      *config.ServerConf
+	conf      config.ServerConf
 	pool      *ConnPool
 	processor Processor
 }
@@ -20,7 +20,7 @@ type Processor interface {
 	OnClose(fd int)
 }
 
-func NewServer(c *config.ServerConf) (s *Server, err error) {
+func NewServer(c config.ServerConf) (s *Server, err error) {
 	err = c.ParseConfig()
 	if err != nil {
 		return

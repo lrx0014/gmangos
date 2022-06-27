@@ -3,8 +3,9 @@ package dao
 import (
 	"database/sql"
 	"github.com/gomodule/redigo/redis"
-
-	_ "github.com/go-sql-driver/mysql"
+	"gmangos/src/libs/config"
+	mysqlBuilder "gmangos/src/libs/mysql"
+	redisBuilder "gmangos/src/libs/redis"
 )
 
 type Dao struct {
@@ -12,23 +13,9 @@ type Dao struct {
 	redis *redis.Pool
 }
 
-func New() *Dao {
+func New(c *config.Conf) *Dao {
 	return &Dao{
-		db:    newDB(),
-		redis: newRedis(),
+		db:    mysqlBuilder.New(c.MySQL),
+		redis: redisBuilder.New(c.Redis),
 	}
-}
-
-func newDB() *sql.DB {
-	dbPool, err := sql.Open("", "")
-	if err != nil {
-		panic(err)
-	}
-
-	return dbPool
-}
-
-func newRedis() *redis.Pool {
-	redisPool := &redis.Pool{}
-	return redisPool
 }

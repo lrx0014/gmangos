@@ -2,16 +2,21 @@ package processor
 
 import (
 	log "github.com/sirupsen/logrus"
+	"gmangos/src/dao"
+	"gmangos/src/libs/config"
 	"gmangos/src/libs/network/tcp"
 )
 
 type AuthProcessor struct {
+	dao *dao.Dao
 }
 
 var _ tcp.Processor = new(AuthProcessor)
 
-func NewAuthProcessor() *AuthProcessor {
-	return &AuthProcessor{}
+func NewAuthProcessor(c *config.Conf) *AuthProcessor {
+	return &AuthProcessor{
+		dao: dao.New(c),
+	}
 }
 
 func (a AuthProcessor) OnConnect(fd int) error {

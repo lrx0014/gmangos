@@ -1,3 +1,17 @@
 [Server]
 Addr = "127.0.0.1"
 Port = "9998"
+
+[MySQL]
+DSN = "admin:admin@tcp(127.0.0.1:3306)/gmangos"
+Idle = 10
+Active = 10
+IdleTimeout = 400
+
+[Redis]
+Host = "127.0.0.1"
+Port = "6379"
+MaxIdle = 10
+MaxActive = 10
+IdleTimeout = 400
+MaxConnLifetime = 400
