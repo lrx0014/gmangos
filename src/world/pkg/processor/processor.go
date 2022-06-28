@@ -13,7 +13,7 @@ type WorldProcessor struct {
 
 var _ tcp.Processor = new(WorldProcessor)
 
-func NewWorldProcessor(c *config.Conf) *WorldProcessor {
+func NewWorldProcessor(c config.Conf) *WorldProcessor {
 	return &WorldProcessor{
 		dao: dao.New(c),
 	}

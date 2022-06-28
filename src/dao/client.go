@@ -13,7 +13,7 @@ type Dao struct {
 	redis *redis.Pool
 }
 
-func New(c *config.Conf) *Dao {
+func New(c config.Conf) *Dao {
 	return &Dao{
 		db:    mysqlBuilder.New(c.MySQL),
 		redis: redisBuilder.New(c.Redis),

@@ -14,7 +14,7 @@ type AuthProcessor struct {
 
 var _ tcp.Processor = new(AuthProcessor)
 
-func NewAuthProcessor(c *config.Conf) *AuthProcessor {
+func NewAuthProcessor(c config.Conf) *AuthProcessor {
 	return &AuthProcessor{
 		dao: dao.New(c),
 	}
@@ -26,7 +26,7 @@ func (a AuthProcessor) OnConnect(fd int) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 

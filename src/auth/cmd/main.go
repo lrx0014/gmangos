@@ -2,26 +2,29 @@ package main
 
 import (
 	"flag"
-	g "github.com/AllenDang/giu"
 	log "github.com/sirupsen/logrus"
+	"gmangos/src/auth/pkg/gui"
 	"gmangos/src/auth/pkg/processor"
 	"gmangos/src/libs/config"
+	"gmangos/src/libs/fifo"
 	"gmangos/src/libs/network/tcp"
 	"gmangos/src/libs/welcome"
+	"io"
+	"os"
 )
 
 var (
 	configPath string
 	runGui     bool
+
+	loggerBuf *fifo.Queue
 )
 
 func main() {
 	parseFlags()
 	conf := config.LoadConfig(config.ReadFile(configPath))
 
-	if runGui {
-		log.AddHook(&uiLogger{})
-	}
+	initEnv()
 
 	server, err := tcp.NewServer(conf.Server)
 	if err != nil {
@@ -52,8 +55,27 @@ func parseFlags() {
 	runGui = *useGui
 }
 
+func initEnv() {
+	// init logger
+	// log to file
+	logPath := config.C.Server.LogPath
+	file, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+	// log to memory buffer
+	loggerBuf = fifo.New(config.C.Server.LogCacheSize)
+	writers := []io.Writer{
+		file,
+		loggerBuf,
+		os.Stdout, // log to stdout
+	}
+	fileAndStdoutWriter := io.MultiWriter(writers...)
+	log.SetOutput(fileAndStdoutWriter)
+}
+
 func runInGui() {
 	log.Infof("[gMaNGOS][auth_server] running in GUI mode")
-	wnd := g.NewMasterWindow("gMaNGOS auth server", 400, 200, 0)
-	wnd.Run(loop)
+	ui := gui.New(loggerBuf)
+	ui.Draw("gMaNGOS auth server")
 }
