@@ -72,6 +72,11 @@ func initEnv() {
 	}
 	fileAndStdoutWriter := io.MultiWriter(writers...)
 	log.SetOutput(fileAndStdoutWriter)
+	log.SetFormatter(&log.TextFormatter{
+		ForceColors:               true,
+		EnvironmentOverrideColors: true,
+		TimestampFormat:           "2006-01-02 15:04:05",
+	})
 }
 
 func runInGui() {
