@@ -13,6 +13,21 @@ import (
 	"os"
 )
 
+type logHook struct {
+	loggerBuf *fifo.Queue
+}
+
+var _ log.Hook = new(logHook)
+
+func (l logHook) Levels() []log.Level {
+	return log.AllLevels
+}
+
+func (l logHook) Fire(entry *log.Entry) error {
+	l.loggerBuf.Push([]byte(entry.Message + "\n"))
+	return nil
+}
+
 var (
 	configPath string
 	runGui     bool
@@ -63,11 +78,8 @@ func initEnv() {
 	if err != nil {
 		panic(err)
 	}
-	// log to memory buffer
-	loggerBuf = fifo.New(config.C.Server.LogCacheSize)
 	writers := []io.Writer{
 		file,
-		loggerBuf,
 		os.Stdout, // log to stdout
 	}
 	fileAndStdoutWriter := io.MultiWriter(writers...)
@@ -77,6 +89,9 @@ func initEnv() {
 		EnvironmentOverrideColors: true,
 		TimestampFormat:           "2006-01-02 15:04:05",
 	})
+	// log to memory buffer
+	loggerBuf = fifo.New(config.C.Server.LogCacheSize)
+	log.AddHook(logHook{loggerBuf: loggerBuf})
 }
 
 func runInGui() {
