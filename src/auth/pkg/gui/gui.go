@@ -2,16 +2,21 @@ package gui
 
 import (
 	g "github.com/AllenDang/giu"
+	"github.com/AllenDang/imgui-go"
 	"gmangos/src/libs/fifo"
+	"gmangos/src/libs/utils"
 )
 
 type UI struct {
-	log *logger
+	log        *logger
+	autoScroll bool
+	reverseLog bool
 }
 
 func New(buf *fifo.Queue) *UI {
 	return &UI{
-		log: newLogger(buf),
+		log:        newLogger(buf),
+		autoScroll: true,
 	}
 }
 
@@ -23,18 +28,37 @@ func Update() {
 	g.Update()
 }
 
-func (u UI) loop() {
+func (u *UI) loop() {
 	g.SingleWindow().Layout(
-		g.Button("clear").OnClick(u.clearLogBuf),
-		g.Labelf(u.readLogBuf()),
+		g.Row(
+			g.Button("clear").OnClick(u.clearLogBuf),
+			g.Checkbox("reverse", &u.reverseLog),
+			g.Checkbox("AutoScroll", &u.autoScroll),
+		),
+
+		g.Child().Layout(
+			g.Custom(func() {
+				for _, msg := range u.readLogBuf() {
+					g.Label(msg).Wrapped(true).Build()
+				}
+
+				if u.autoScroll {
+					defer imgui.SetScrollHereY(1.0)
+				}
+			}),
+		).ID("log_panel"),
 	)
 }
 
-func (u UI) readLogBuf() string {
-	res := ""
+func (u UI) readLogBuf() []string {
+	res := make([]string, 0)
 	all := u.log.buf.All()
 	for _, data := range all {
-		res += string(data)
+		res = append(res, string(data))
+	}
+
+	if u.reverseLog {
+		utils.ReverseStrings(res)
 	}
 
 	return res
