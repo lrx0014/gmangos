@@ -34,7 +34,7 @@ func main() {
 }
 
 func parseFlags() {
-	path := flag.String("conf", "config.toml", "指定toml配置文件路径")
+	path := flag.String("conf", "conf/world.toml", "指定toml配置文件路径")
 	flag.Parse()
 
 	configPath = *path

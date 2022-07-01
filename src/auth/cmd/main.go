@@ -62,7 +62,7 @@ func main() {
 }
 
 func parseFlags() {
-	path := flag.String("conf", "config.toml", "指定toml配置文件路径")
+	path := flag.String("conf", "conf/auth.toml", "指定toml配置文件路径")
 	useGui := flag.Bool("gui", false, "以gui模式运行")
 	flag.Parse()
 
