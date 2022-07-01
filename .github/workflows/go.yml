@@ -15,6 +15,9 @@ jobs:
     
     - name: Install GLFW Deps
       uses: RpxdYTX/install-glfw-deps@v2
+      
+    - name: Install libxxf86vm-dev
+      run: sudo apt-get install libxxf86vm-dev
 
     - name: Set up Go
       uses: actions/setup-go@v3
