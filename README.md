@@ -1,5 +1,6 @@
 # gmangos
 golang MaNGOS
+
 [![Go Build](https://github.com/lrx0014/gmangos/actions/workflows/go.yml/badge.svg?branch=master)](https://github.com/lrx0014/gmangos/actions/workflows/go.yml/badge.svg?branch=master)
 
 ## Commit History
