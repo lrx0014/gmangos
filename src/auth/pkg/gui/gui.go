@@ -19,8 +19,13 @@ func (u UI) Draw(wnd string) {
 	g.NewMasterWindow(wnd, 400, 200, 0).Run(u.loop)
 }
 
+func Update() {
+	g.Update()
+}
+
 func (u UI) loop() {
 	g.SingleWindow().Layout(
+		g.Button("clear").OnClick(u.clearLogBuf),
 		g.Labelf(u.readLogBuf()),
 	)
 }
@@ -33,4 +38,8 @@ func (u UI) readLogBuf() string {
 	}
 
 	return res
+}
+
+func (u UI) clearLogBuf() {
+	u.log.buf.Reset()
 }

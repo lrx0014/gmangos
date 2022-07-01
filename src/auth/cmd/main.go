@@ -25,6 +25,7 @@ func (l logHook) Levels() []log.Level {
 
 func (l logHook) Fire(entry *log.Entry) error {
 	l.loggerBuf.Push([]byte(entry.Message + "\n"))
+	gui.Update()
 	return nil
 }
 
@@ -89,9 +90,11 @@ func initEnv() {
 		EnvironmentOverrideColors: true,
 		TimestampFormat:           "2006-01-02 15:04:05",
 	})
-	// log to memory buffer
-	loggerBuf = fifo.New(config.C.Server.LogCacheSize)
-	log.AddHook(logHook{loggerBuf: loggerBuf})
+	// log to memory buffer only if gui mode is turned on
+	if runGui {
+		loggerBuf = fifo.New(config.C.Server.LogCacheSize)
+		log.AddHook(logHook{loggerBuf: loggerBuf})
+	}
 }
 
 func runInGui() {

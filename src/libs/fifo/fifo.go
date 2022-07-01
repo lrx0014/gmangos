@@ -52,6 +52,12 @@ func (q *Queue) All() (values [][]byte) {
 	return
 }
 
+func (q *Queue) Reset() {
+	q.locker.Lock()
+	defer q.locker.Unlock()
+	q.list = list.New()
+}
+
 func (q *Queue) Write(p []byte) (n int, err error) {
 	q.Push(p)
 	return len(p), nil
