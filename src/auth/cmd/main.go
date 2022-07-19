@@ -30,15 +30,25 @@ func (l logHook) Fire(entry *log.Entry) error {
 }
 
 var (
-	configPath string
-	runGui     bool
+	configPath  string
+	runGui      bool
+	runInDocker bool
 
 	loggerBuf *fifo.Queue
 )
 
 func main() {
 	parseFlags()
-	conf := config.LoadConfig(config.ReadFile(configPath))
+	var conf config.Conf
+
+	if "1" == os.Getenv("RUN_IN_DOCKER") {
+		// 容器内运行从环境变量获取配置信息
+		conf = config.LoadEnv()
+		runInDocker = true
+	} else {
+		// 二进制运行从配置文件获取
+		conf = config.LoadConfig(config.ReadFile(configPath))
+	}
 
 	initEnv()
 
@@ -53,6 +63,9 @@ func main() {
 	welcome.Welcome()
 	log.Infof("[gMaNGOS][auth_server] VERSION %s", welcome.Version())
 	log.Infof("[gMaNGOS][auth_server] is running.")
+	if runInDocker {
+		log.Infof("[gMaNGOS][auth_server] running in docker mode, all config params will be loaded from env")
+	}
 	log.Infof("[gMaNGOS][auth_server] endpoint: %s:%s", config.C.Server.Host, config.C.Server.Port)
 
 	if runGui {
