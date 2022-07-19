@@ -14,9 +14,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Set Version
+      id: get_version
+      run: echo '::set-output name=VERSION::$(date +%s)'
     - name: Build the Docker image
-      run: docker build . --file auth.Dockerfile --tag lrx0014/gmangos:$(date +%s)
+      run: docker build . --file auth.Dockerfile --tag lrx0014/gmangos:${{ steps.get_version.outputs.VERSION }}
     - name: Login in
       run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
     - name: Push Docker Hub
-      run: docker push lrx0014/gmangos:$(date +%s)
+      run: docker push lrx0014/gmangos:${{ steps.get_version.outputs.VERSION }}
