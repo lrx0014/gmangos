@@ -16,10 +16,10 @@ jobs:
     - uses: actions/checkout@v3
     - name: Set Version
       id: get_version
-      run: echo '::set-output name=VERSION::$(date +%s)'
+      run: echo ::set-output name=docker_tag::$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
     - name: Build the Docker image
-      run: docker build . --file auth.Dockerfile --tag lrx0014/gmangos:${{ steps.get_version.outputs.VERSION }}
+      run: docker build . --file auth.Dockerfile --tag lrx0014/gmangos:${{ steps.get_version.outputs.docker_tag }}
     - name: Login in
       run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
     - name: Push Docker Hub
-      run: docker push lrx0014/gmangos:${{ steps.get_version.outputs.VERSION }}
+      run: docker push lrx0014/gmangos:${{ steps.get_version.outputs.docker_tag }}
