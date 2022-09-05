@@ -16,10 +16,9 @@ type Conf struct {
 }
 
 type ServerConf struct {
-	Host         string
-	Port         string
-	LogPath      string
-	LogCacheSize int
+	Host    string
+	Port    string
+	LogPath string
 }
 
 type RedisConf struct {

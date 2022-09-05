@@ -21,9 +21,6 @@ func (c *ServerConf) ParseConfig() (err error) {
 	if c.LogPath == "" {
 		c.LogPath = fmt.Sprintf(DefaultServerLogPath, time.Now().Unix())
 	}
-	if c.LogCacheSize == 0 {
-		c.LogCacheSize = 1024
-	}
 
 	return
 }

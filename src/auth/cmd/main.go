@@ -3,38 +3,17 @@ package main
 import (
 	"flag"
 	log "github.com/sirupsen/logrus"
-	"gmangos/src/auth/pkg/gui"
 	"gmangos/src/auth/pkg/processor"
 	"gmangos/src/libs/config"
-	"gmangos/src/libs/fifo"
 	"gmangos/src/libs/network/tcp"
 	"gmangos/src/libs/welcome"
 	"io"
 	"os"
 )
 
-type logHook struct {
-	loggerBuf *fifo.Queue
-}
-
-var _ log.Hook = new(logHook)
-
-func (l logHook) Levels() []log.Level {
-	return log.AllLevels
-}
-
-func (l logHook) Fire(entry *log.Entry) error {
-	l.loggerBuf.Push([]byte(entry.Message + "\n"))
-	gui.Update()
-	return nil
-}
-
 var (
 	configPath  string
-	runGui      bool
 	runInDocker bool
-
-	loggerBuf *fifo.Queue
 )
 
 func main() {
@@ -68,20 +47,14 @@ func main() {
 	}
 	log.Infof("[gMaNGOS][auth_server] endpoint: %s:%s", config.C.Server.Host, config.C.Server.Port)
 
-	if runGui {
-		runInGui()
-	} else {
-		select {}
-	}
+	select {}
 }
 
 func parseFlags() {
 	path := flag.String("conf", "conf/auth.toml", "指定toml配置文件路径")
-	useGui := flag.Bool("gui", false, "以gui模式运行")
 	flag.Parse()
 
 	configPath = *path
-	runGui = *useGui
 }
 
 func initEnv() {
@@ -103,15 +76,4 @@ func initEnv() {
 		EnvironmentOverrideColors: true,
 		TimestampFormat:           "2006-01-02 15:04:05",
 	})
-	// log to memory buffer only if gui mode is turned on
-	if runGui {
-		loggerBuf = fifo.New(config.C.Server.LogCacheSize)
-		log.AddHook(logHook{loggerBuf: loggerBuf})
-	}
-}
-
-func runInGui() {
-	log.Infof("[gMaNGOS][auth_server] running in GUI mode")
-	ui := gui.New(loggerBuf)
-	ui.Draw("gMaNGOS auth server")
 }
